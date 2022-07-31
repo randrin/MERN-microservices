@@ -1,10 +1,20 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const { randomBytes } = require("crypto");
 
 const app = express();
+
+mongoose
+  .connect(process.env.MONGODB_URL, {})
+  .then(() => {
+    console.log("connected to mongodb");
+  })
+  .catch((error) => {
+    console.log("Error connected to mongodb:", error.reason);
+  });
 
 app.use(bodyParser.json());
 app.use(cors());
