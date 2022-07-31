@@ -1,11 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
-const { randomBytes } = require("crypto");
 const config = require("./config");
-
 
 const app = express();
 
@@ -25,21 +24,10 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-const posts = [];
-
-app.get("/posts", (req, res) => {
-  return res.status(200).json(posts);
-});
-
-app.post("/posts", (req, res) => {
-  const { title } = req.body;
-  const id = randomBytes(4).toString("hex");
-  posts.push({
-    id,
-    title,
-  });
-  return res.status(200).json(posts);
-});
+// Routes Middleware
+fs.readdirSync("./routers").map((r) =>
+  app.use(require(`./routers/${r}`))
+);
 
 const port = config.PORT;
 app.listen(port, () => {
